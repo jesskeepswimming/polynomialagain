@@ -18,10 +18,16 @@ public:
     }
     
     Polynomial(int A[], int size) {
-        data.resize(size);
-        for(int i = 0 ; i < size ; i ++) {
-            data[i] = A[i];
+        
+        if (size!=0) {            
+            data.resize(size);
+            for(int i = 0 ; i < size ; i ++) {
+                data[i] = A[i];
+            }
+        } else { // accounts for empty case
+            data.push_back(0);
         }
+
     }
 
     Polynomial() {
@@ -219,6 +225,27 @@ public:
         cout << endl;
     }
 
+    void test_array_constructor() {
+        int testVals[3] = {3,2,1};
+        Polynomial constructTest(testVals, 3);
+
+        for (int i = 0; i<3; i++) {
+            assert(constructTest.data[i] == testVals[i]);
+        }
+        cout << "Test 1 for array constructor passed: coefficients equal to array \n";
+
+        Polynomial constructEmpty({}, 0);
+        assert(constructEmpty.data.size() == 1 && constructEmpty.data[0] == 0);
+        cout << "Test 2 for array constructor passed: empty constructor results in a 0 polynomial \n";
+
+        int testOne[1] = {3};
+        Polynomial constructOne(testOne, 1);
+        assert(constructOne.data.size() == 1 && constructOne.data[0] == 3);
+        cout << "Test 3 for array constructor passed: constructor paramater of size one results in a constant polynomial \n";
+        cout<< endl;
+
+    }
+
     // test empty polynomial
     // test addition/subtraction/mult/equality of 0 polynomials
 
@@ -284,6 +311,7 @@ public:
         setup();
         test_string_constructor();
         test_default_constructor();
+        test_array_constructor();
 
         test_equal();
         test_addition();
