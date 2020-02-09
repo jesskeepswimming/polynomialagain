@@ -163,12 +163,6 @@ public:
         test_polynomial_2.data.push_back(poly_2[1]);
         test_polynomial_2.data.push_back(poly_2[2]);
         test_polynomial_2.data.push_back(poly_2[3]);
-
-        assert(test_polynomial_1.data.size() == 3);
-        cout << "Size test passed for TP1 \n";
-        
-        assert(test_polynomial_2.data.size() == 4);
-        cout << "Size test passed for TP2 \n";
         cout << endl;
     }
 
@@ -235,6 +229,7 @@ public:
         p1.data.pop_back();
         assert(p1.operator==(test_polynomial_1) == false);
         cout << "Test 3 for operator== passed: polynomials not equal \n";
+        cout << endl;
     }
 
     void test_addition() {
@@ -246,6 +241,13 @@ public:
 
         assert(test_polynomial_1.operator+(test_polynomial_2).data[3] == 4);
         cout << "Test 3 for operator+ passed: x^2 term of sum polynomial has correct coefficient \n";
+
+        assert(test_polynomial_1.operator+(test_polynomial_2) == test_polynomial_2.operator+(test_polynomial_1));
+        cout << "Test 4 for operator+ passed: TP1 + TP2 returns same result as TP2 + TP1 \n";
+
+        Polynomial zero(0, 0);
+        assert(test_polynomial_1.operator+(zero) == test_polynomial_1);
+        cout << "Test 5 for operator+ passed: adding zero polynomial does not change the result \n";
         cout << endl;
     }
 
@@ -267,7 +269,7 @@ public:
 
         Polynomial zero(0, 0);
         assert(test_polynomial_1.operator-(zero) == test_polynomial_1);
-        cout << "Test 4 for operator- passed: subtracting zero polynomial does not change the original \n";
+        cout << "Test 4 for operator- passed: subtracting zero polynomial does not change the result \n";
         cout << endl;
     }
 
