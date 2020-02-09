@@ -24,7 +24,7 @@ public:
             for(int i = 0 ; i < size ; i ++) {
                 data[i] = A[i];
             }
-        } else { // accounts for empty case
+        } else { // accounts for empty case, treats them as 0
             data.push_back(0);
         }
 
@@ -153,15 +153,20 @@ class PolynomialTest {
     int poly_2[4] = {-1, -2, 4, 4};
     Polynomial test_polynomial_1;
     Polynomial test_polynomial_2;
+    Polynomial test_empty;
     
 public:
     void setup() {
         cout << endl;
         // 5x^2 - 2x + 3
+        
         test_polynomial_1.data.resize(0);
         test_polynomial_1.data.push_back(poly_1[0]);
         test_polynomial_1.data.push_back(poly_1[1]);
         test_polynomial_1.data.push_back(poly_1[2]);
+        
+        //Polynomial test_polynomial_1(poly_1, 3);
+
 
         // 4x^3 + 4x^2 - 2x - 1
         test_polynomial_2.data.resize(0);
@@ -170,11 +175,20 @@ public:
         test_polynomial_2.data.push_back(poly_2[2]);
         test_polynomial_2.data.push_back(poly_2[3]);
 
+        test_empty.data.resize(0);
+        test_empty.data.push_back(0);
+
         assert(test_polynomial_1.data.size() == 3);
         cout << "Size test passed for TP1 \n";
         
         assert(test_polynomial_2.data.size() == 4);
         cout << "Size test passed for TP2 \n";
+
+        assert(test_empty.data.size() == 1); 
+        cout << "Size test passed for empty TP3";
+
+
+
         cout << endl;
     }
 
@@ -246,11 +260,12 @@ public:
 
     }
 
-    // test empty polynomial
     // test addition/subtraction/mult/equality of 0 polynomials
 
     void test_equal() {
         Polynomial p1(poly_1, 3);
+        Polynomial p2({}, 0);
+
 
         assert(p1.operator==(test_polynomial_1) == true);
         cout << "Test 1 for operator== passed: polynomials are equal \n";
@@ -262,6 +277,11 @@ public:
         p1.data.pop_back();
         assert(p1.operator==(test_polynomial_1) == false);
         cout << "Test 3 for operator== passed: polynomials not equal \n";
+
+        assert(p2.operator==(test_empty) == true);
+        cout<< "Test 4 for operator== passed: empty cases equal to 0 \n";
+
+        cout <<endl;
     }
 
     void test_addition() {
@@ -273,6 +293,12 @@ public:
 
         assert(test_polynomial_1.operator+(test_polynomial_2).data[3] == 4);
         cout << "Test 3 for operator+ passed: x^2 term of sum polynomial has correct coefficient \n";
+
+
+        assert(test_polynomial_1.operator+(test_polynomial_2).data[3] == 4);
+        cout << "Test 3 for operator+ passed: x^2 term of sum polynomial has correct coefficient \n";
+
+
         cout << endl;
     }
 
