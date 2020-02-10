@@ -18,14 +18,14 @@ public:
     }
     
     Polynomial(int A[], int size) {
-        
-        if (size!=0) {            
+        if (size != 0) { 
             data.resize(size);
             for(int i = 0 ; i < size ; i ++) {
                 data[i] = A[i];
             }
-        } else { // accounts for empty case, treats them as 0
-            data.push_back(0);
+        } else {
+            data.resize(1);
+            data[0] = 0;
         }
 
     }
@@ -59,6 +59,8 @@ public:
 
     bool operator==(const Polynomial& target) {
         bool are_equal = true;
+
+
         if(data.size() != target.data.size()) return false;
         for(int i = 0 ; i < data.size() ; i ++) {
             if(data[i] != target.data[i]) return false;
@@ -98,7 +100,10 @@ public:
     }
 
     Polynomial operator*(const Polynomial& target) {
-
+        
+        if (target.data.size() == 1 && target.data[0] == 0) return Polynomial({},0);
+        if (data.size() == 1 && data[0] == 0) return Polynomial({},0);
+        
         int size = data.size() + target.data.size() - 1;
         int co[size];
 
@@ -114,6 +119,9 @@ public:
     }
 
     Polynomial derivative() {
+
+        if (data.size() == 1 && data[0] == 0) return Polynomial({},0);
+
         int deriv_coefficients[data.size() - 1];
         for(int i = 0 ; i < data.size() - 1 ; i ++) {
             deriv_coefficients[i] = data[i + 1]*(i + 1);
@@ -154,20 +162,17 @@ class PolynomialTest {
     Polynomial test_polynomial_1;
     Polynomial test_polynomial_2;
     Polynomial test_empty;
+    Polynomial test_one;
     
 public:
     void setup() {
         cout << endl;
         // 5x^2 - 2x + 3
-        
         test_polynomial_1.data.resize(0);
         test_polynomial_1.data.push_back(poly_1[0]);
         test_polynomial_1.data.push_back(poly_1[1]);
         test_polynomial_1.data.push_back(poly_1[2]);
         
-        //Polynomial test_polynomial_1(poly_1, 3);
-
-
         // 4x^3 + 4x^2 - 2x - 1
         test_polynomial_2.data.resize(0);
         test_polynomial_2.data.push_back(poly_2[0]);
@@ -175,8 +180,13 @@ public:
         test_polynomial_2.data.push_back(poly_2[2]);
         test_polynomial_2.data.push_back(poly_2[3]);
 
+        // 0
         test_empty.data.resize(0);
         test_empty.data.push_back(0);
+
+        // 1
+        test_one.data.resize(0);
+        test_one.data.push_back(1);
 
         assert(test_polynomial_1.data.size() == 3);
         cout << "Size test passed for TP1 \n";
@@ -185,9 +195,10 @@ public:
         cout << "Size test passed for TP2 \n";
 
         assert(test_empty.data.size() == 1); 
-        cout << "Size test passed for empty TP3";
+        cout << "Size test passed for empty TP3 \n";
 
-
+        assert(test_one.data.size() == 1); 
+        cout << "Size test passed for constant polynomial TP4 \n";
 
         cout << endl;
     }
@@ -196,7 +207,7 @@ public:
         Polynomial file_1("test_polynomial.txt");
         file_1.print();
         cout << endl;
-        cout << "Polynomial degree: " << file_1.data.size() - 1;
+        cout << "Polynomial degree: " << file_1.data.size() - 1 << " \n";
         cout << endl;
 
         assert(file_1.data.size() == 6);
@@ -249,7 +260,7 @@ public:
         cout << "Test 1 for array constructor passed: coefficients equal to array \n";
 
         Polynomial constructEmpty({}, 0);
-        assert(constructEmpty.data.size() == 1 && constructEmpty.data[0] == 0);
+        assert(constructEmpty.data.size() == 1 && constructEmpty.data[0] ==0);
         cout << "Test 2 for array constructor passed: empty constructor results in a 0 polynomial \n";
 
         int testOne[1] = {3};
@@ -260,7 +271,6 @@ public:
 
     }
 
-    // test addition/subtraction/mult/equality of 0 polynomials
 
     void test_equal() {
         Polynomial p1(poly_1, 3);
@@ -278,9 +288,10 @@ public:
         assert(p1.operator==(test_polynomial_1) == false);
         cout << "Test 3 for operator== passed: polynomials not equal \n";
 
+        
         assert(p2.operator==(test_empty) == true);
         cout<< "Test 4 for operator== passed: empty cases equal to 0 \n";
-
+        
         cout <<endl;
     }
 
@@ -294,10 +305,8 @@ public:
         assert(test_polynomial_1.operator+(test_polynomial_2).data[3] == 4);
         cout << "Test 3 for operator+ passed: x^2 term of sum polynomial has correct coefficient \n";
 
-
-        assert(test_polynomial_1.operator+(test_polynomial_2).data[3] == 4);
-        cout << "Test 3 for operator+ passed: x^2 term of sum polynomial has correct coefficient \n";
-
+        assert(test_polynomial_1.operator+(test_empty) == test_polynomial_1);
+        cout << "Test 4 for operator+ passed: adding by empty polynomial results in itself \n";
 
         cout << endl;
     }
@@ -318,18 +327,45 @@ public:
         assert(test_polynomial_2.operator-(test_polynomial_1).data[3] == 4);
         cout << "Test 3 for operator- passed: all coefficients are correct for TP2 - TP1 \n";
 
-        Polynomial zero(0, 0);
-        assert(test_polynomial_1.operator-(zero) == test_polynomial_1);
-        cout << "Test 4 for operator- passed: subtracting zero polynomial does not change the original \n";
+        //Polynomial zero(0, 0);
+        assert(test_polynomial_1.operator-(test_empty) == test_polynomial_1);
+        cout << "Test 4 for operator- passed: subtracting by empty polynomial does not change the original \n";
         cout << endl;
     }
 
     void test_multiplication() { // jess
 
+        int productP1P2[6] = {-3, -4, 11, -6, 12, 20};
+        Polynomial prodTest(productP1P2, 6);
+        assert(test_polynomial_1.operator*(test_polynomial_2) == prodTest);
+        cout << "Test 1 for operator* passed: all coefficients are correct for TP1*TP2 \n";
+
+        Polynomial zeroCase({},0);
+        assert(test_polynomial_1.operator*(test_empty) == zeroCase);
+        cout << "Test 2 for operator* passed: multuplying by 0 results in 0 \n";
+
+        assert(test_polynomial_1.operator*(test_one) == test_polynomial_1);
+        cout << "Test 3 for operator* passed: multuplying by 1 results in itself \n";
+
+        cout<< endl;
 
     }
 
     void test_derivative() { // jess
+        int derivativeP1[2] = {-2,10};
+        Polynomial derivativetest(derivativeP1, 2);
+
+        assert(test_polynomial_1.derivative() == derivativetest);
+        cout << "Test 1 for derivative passed: derivative coefficients match with expected for test polynomial 1 \n";
+
+        assert(test_one.derivative() == test_empty);
+        cout << "Test 2 for derivative passed: derivative of a constant is 0 \n";
+
+        
+        assert(test_empty.derivative() == test_empty);
+        cout << "Test 3 for derivative passed: derivative of an empty polynomial is 0 \n";
+
+        cout<< endl;
 
     }
 
@@ -342,6 +378,8 @@ public:
         test_equal();
         test_addition();
         test_subtraction();
+        test_multiplication();
+        test_derivative();
     }
 };
 
