@@ -287,6 +287,7 @@ public:
         p1.data.pop_back();
         assert(p1.operator==(test_polynomial_1) == false);
         cout << "Test 3 for operator== passed: polynomials not equal \n";
+        cout << endl;
 
         
         assert(p2.operator==(test_empty) == true);
@@ -306,7 +307,10 @@ public:
         cout << "Test 3 for operator+ passed: x^2 term of sum polynomial has correct coefficient \n";
 
         assert(test_polynomial_1.operator+(test_empty) == test_polynomial_1);
-        cout << "Test 4 for operator+ passed: adding by empty polynomial results in itself \n";
+        cout << "Test 4 for operator+ passed: adding by empty/0 polynomial does not change result \n";
+
+        assert(test_polynomial_1.operator+(test_polynomial_2) == test_polynomial_2.operator+(test_polynomial_1));
+        cout << "Test 5 for operator+ passed: TP1 + TP2 returns same result as TP2 + TP1 \n";
 
         cout << endl;
     }
@@ -329,7 +333,8 @@ public:
 
         //Polynomial zero(0, 0);
         assert(test_polynomial_1.operator-(test_empty) == test_polynomial_1);
-        cout << "Test 4 for operator- passed: subtracting by empty polynomial does not change the original \n";
+        cout << "Test 4 for operator- passed: subtracting by empty/0 polynomial does not change the result \n";
+
         cout << endl;
     }
 
